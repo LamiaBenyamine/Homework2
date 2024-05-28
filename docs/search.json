@@ -1,0 +1,16 @@
+[
+  {
+    "objectID": "Programming in Base.html",
+    "href": "Programming in Base.html",
+    "title": "Homework 2 - Programming in Base R",
+    "section": "",
+    "text": "Create 2 vectors on blood pressure in an experiment: one for pre-treatment, and one for post-treatment. Assign subject names to both vectors.\n\npre_bp &lt;- c(130, 128, 116, 124, 133, 134, 118, 126, 114, 127, 141, 138, 128, 140, 137, 131, 120, 128, 139, 135)\n\npost_bp &lt;- c(114, 98, 113, 99, 107, 116, 113, 111, 119, 117, 101, 119, 130, 122, 106, 106, 124, 102, 117, 113)\n\n#create a vector of subject names\npatient &lt;- paste(\"Subject\", 1:20, sep = \"_\")\n\n#use infix to assign patient to bp vectors\nnames(pre_bp) &lt;- names(post_bp) &lt;- patient \nnames(pre_bp)\n\n [1] \"Subject_1\"  \"Subject_2\"  \"Subject_3\"  \"Subject_4\"  \"Subject_5\" \n [6] \"Subject_6\"  \"Subject_7\"  \"Subject_8\"  \"Subject_9\"  \"Subject_10\"\n[11] \"Subject_11\" \"Subject_12\" \"Subject_13\" \"Subject_14\" \"Subject_15\"\n[16] \"Subject_16\" \"Subject_17\" \"Subject_18\" \"Subject_19\" \"Subject_20\"\n\nnames(post_bp)\n\n [1] \"Subject_1\"  \"Subject_2\"  \"Subject_3\"  \"Subject_4\"  \"Subject_5\" \n [6] \"Subject_6\"  \"Subject_7\"  \"Subject_8\"  \"Subject_9\"  \"Subject_10\"\n[11] \"Subject_11\" \"Subject_12\" \"Subject_13\" \"Subject_14\" \"Subject_15\"\n[16] \"Subject_16\" \"Subject_17\" \"Subject_18\" \"Subject_19\" \"Subject_20\"\n\n\n\n\n\n#Change in BP vector\ndiff_bp &lt;- post_bp - pre_bp\n\n#Average decrease in BP\nmean(diff_bp)\n\n[1] -17\n\n#Patients with decrease in BP post treatment (+ change)\nneg_bp &lt;- which(diff_bp &lt; 0)\ndiff_bp[neg_bp]\n\n Subject_1  Subject_2  Subject_3  Subject_4  Subject_5  Subject_6  Subject_7 \n       -16        -30         -3        -25        -26        -18         -5 \n Subject_8 Subject_10 Subject_11 Subject_12 Subject_14 Subject_15 Subject_16 \n       -15        -10        -40        -19        -18        -31        -25 \nSubject_18 Subject_19 Subject_20 \n       -26        -22        -22 \n\n#Average decrease in BP of the subset of patients with a decrease\nround(mean(diff_bp[neg_bp]),2)\n\n[1] -20.65"
+  },
+  {
+    "objectID": "Programming in Base.html#statistics-on-the-vectors",
+    "href": "Programming in Base.html#statistics-on-the-vectors",
+    "title": "Homework 2 - Programming in Base R",
+    "section": "",
+    "text": "#Change in BP vector\ndiff_bp &lt;- post_bp - pre_bp\n\n#Average decrease in BP\nmean(diff_bp)\n\n[1] -17\n\n#Patients with decrease in BP post treatment (+ change)\nneg_bp &lt;- which(diff_bp &lt; 0)\ndiff_bp[neg_bp]\n\n Subject_1  Subject_2  Subject_3  Subject_4  Subject_5  Subject_6  Subject_7 \n       -16        -30         -3        -25        -26        -18         -5 \n Subject_8 Subject_10 Subject_11 Subject_12 Subject_14 Subject_15 Subject_16 \n       -15        -10        -40        -19        -18        -31        -25 \nSubject_18 Subject_19 Subject_20 \n       -26        -22        -22 \n\n#Average decrease in BP of the subset of patients with a decrease\nround(mean(diff_bp[neg_bp]),2)\n\n[1] -20.65"
+  }
+]
