@@ -1,0 +1,179 @@
+---
+title: "Homework 2 - Programming in Base R"
+author: "Lamia Benyamine"
+date: "5/28/2024"
+format: html
+editor: visual
+---
+
+# *Task 1:* Basic Vector Practice
+
+Create 2 vectors on blood pressure in an experiment: one for pre-treatment, and one for post-treatment. Assign subject names to both vectors.
+
+```{r}
+pre_bp <- c(130, 128, 116, 124, 133, 134, 118, 126, 114, 127, 141, 138, 128, 140, 137, 131, 120, 128, 139, 135)
+
+post_bp <- c(114, 98, 113, 99, 107, 116, 113, 111, 119, 117, 101, 119, 130, 122, 106, 106, 124, 102, 117, 113)
+
+#create a vector of subject names
+patient <- paste("Subject", 1:20, sep = "_")
+
+#use infix to assign patient to bp vectors
+names(pre_bp) <- names(post_bp) <- patient 
+names(pre_bp)
+names(post_bp)
+
+```
+
+## Statistics on the vectors
+
+```{r}
+#Change in BP vector
+diff_bp <- post_bp - pre_bp
+
+#Average decrease in BP
+mean(diff_bp)
+
+#Patients with decrease in BP post treatment (+ change)
+neg_bp <- which(diff_bp < 0)
+diff_bp[neg_bp]
+
+#Average decrease in BP of the subset of patients with a decrease
+round(mean(diff_bp[neg_bp]),2)
+```
+
+# *Task 2:* Basic Data Frame Practice
+
+Create a data frame with the data above
+
+```{r}
+bp_df <- data.frame(patient, pre_bp, post_bp, diff_bp)
+row.names(bp_df) <- 1:20 #change row names to numbers instead of subject
+
+#Return rows where the difference in BP is negative
+bp_df[bp_df$diff_bp < 0, ]
+
+#Add a new column to determine if post BP is > 120
+bp_df$low_bp <- bp_df$post_bp < 120
+
+#print data frame out nicely
+knitr::kable(bp_df)
+```
+
+# *Task 3:* List Practice
+
+Create a new data frame with data from a new experiment
+
+```{r}
+placebo_df <- data.frame(patient = patient[1:10], 
+               pre_bp = c(138, 135, 147, 117, 152, 134, 114, 121, 131, 130), 
+               post_bp = c(105, 136, 123, 130, 134, 143, 135, 139, 120, 124))
+placebo_df$diff_bp <- placebo_df$post_bp - placebo_df$pre_bp
+placebo_df$low_bp <- placebo_df$post_bp < 120
+placebo_df
+```
+
+Create a list with the two data frames
+
+```{r}
+bp_list <-list(treatment = bp_df, placebo = placebo_df)
+```
+
+Access the first list element multiple ways
+
+```{r}
+bp_list[[1]]
+bp_list[["treatment"]]
+bp_list$treatment
+```
+
+Access pre_bp placebo element
+
+```{r}
+bp_list$placebo[2]
+```
+
+# *Task 4:* Control Flow Practice
+
+Create a new column to each list element using a loop
+
+```{r}
+bp_list$treatment$status <- character(20)
+bp_list$placebo$status <- character(10)
+
+#loop to fill in status values Treatment
+for (i in 1:length(bp_list$treatment[[1]])) {
+  if(bp_list$treatment[[i,3]] <= 120){
+    bp_list$treatment[i,6] <- "optimal"
+  }
+  else if((bp_list$treatment[[i,3]] > 120) & (bp_list$treatment[[i,3]] <= 130)){
+    bp_list$treatment[i,6] <- "borderline"
+  }
+  else if(bp_list$treatment[[i,3]] > 130){
+    bp_list$treatment[i,6] <- "high"
+  }
+  else {
+    bp_list$treatment[i,6] <- ""
+  }
+}
+#loop to fill in status values Placebo
+for (i in 1:length(bp_list$placebo[[1]])) {
+  if(bp_list$placebo[[i,3]] <= 120){
+    bp_list$placebo[i,6] <- "optimal"
+  }
+  else if((bp_list$placebo[[i,3]] > 120) & (bp_list$placebo[[i,3]] <= 130)){
+    bp_list$placebo[i,6] <- "borderline"
+  }
+  else if(bp_list$placebo[[i,3]] > 130){
+    bp_list$placebo[i,6] <- "high"
+  }
+  else {
+    bp_list$placebo[i,6] <- ""
+  }
+}
+```
+Print the updated list
+
+```{r}
+bp_list
+```
+
+# *Task 5:* Function Writing
+
+Create a function that takes in two data frames and a summary R function and returns the statistic for each numeric column.
+
+```{r}
+#Make the default statistic "mean"
+sum_dfs <- function(df_trt, df_placebo, type = "mean"){
+  my_fun <- get(type)
+  
+#Create vector of stat names
+stat_name <- paste0(c("trt","trt", "trt","pcb", "pcb", "pcb"), sep ="_", c("pre", "post", "diff"), sep ="_", type)
+  
+#Create vector for the values and populate it
+stat_values <- numeric(6)
+  for(i in 2:4){
+    stat_values[i-1] <- my_fun(bp_list$treatment[[i]])
+  }
+  for(i in 2:4){
+    stat_values[i+2] <- my_fun(bp_list$placebo[[i]])
+  }
+
+#Assign stat names to the values
+
+names(stat_values) <- stat_name
+#Return the value vector
+stat_values
+}
+```
+
+Apply the function to the previously created data frames using different statistics.
+
+```{r}
+sum_dfs(bp_df,placebo_df)
+sum_dfs(bp_df,placebo_df, type = "var")
+sum_dfs(bp_df,placebo_df, type = "sd")
+sum_dfs(bp_df,placebo_df, type = "min")
+sum_dfs(bp_df,placebo_df, type = "max")
+
+```
